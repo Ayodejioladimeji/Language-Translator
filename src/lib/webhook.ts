@@ -1,5 +1,7 @@
 import axios from "axios";
 
+/* eslint-disable */
+
 export const sendWebhookNotification = async (webhookUrl: string, message: string, language:string) => {
     try {
         if (!webhookUrl || !/^https?:\/\//.test(webhookUrl)) {

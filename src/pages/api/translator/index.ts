@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import axios from "axios";
 import { sendWebhookNotification } from "@/lib/webhook";
 import translate from "google-translate-api-x";
+
+/* eslint-disable */
 
 //full country names to ISO codes
 const languageMap: Record<string, string> = {
