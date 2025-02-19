@@ -49,7 +49,7 @@ export default async function handler(
                     },
                     descriptions: {
                         app_description: "Translates text into a selected default language in real-time.",
-                        app_logo: "https://res.cloudinary.com/devsource/image/upload/v1740004437/translator-logo_npkwxx.jpg",
+                        app_logo: "https://res.cloudinary.com/devsource/image/upload/v1740004619/istockphoto-1281121906-612x612_p4dv6x.jpg",
                         app_name: "Language Translator",
                         app_url: "https://language-translators.vercel.app/api/translate",
                         background_color: "#ffffff"
