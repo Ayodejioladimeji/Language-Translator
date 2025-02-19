@@ -51,7 +51,7 @@ export default async function handler(
                         app_description: "Translates text into a selected default language in real-time.",
                         app_logo: "https://res.cloudinary.com/devsource/image/upload/v1737510989/translator_logo.png",
                         app_name: "Language Translator",
-                        app_url: "https://language-translator.vercel.app/api/translate",
+                        app_url: "https://language-translators.vercel.app/api/translate",
                         background_color: "#ffffff"
                     },
                     is_active: false,
@@ -72,7 +72,7 @@ export default async function handler(
                     },
                     author: "Layobright",
                     integration_category: "Communication & Collaboration",
-                    website: "https://language-translator.vercel.app",
+                    website: "https://language-translators.vercel.app",
                     settings: [
                         {
                             label: "defaultLanguage",
@@ -108,11 +108,11 @@ export default async function handler(
                             label: "WebhookUrl",
                             type: "text",
                             description: "Specify the webhook URL to receive translated text.",
-                            default: "https://my-webhook-url.com",
+                            default: "",
                             required: false
                         }
                     ],
-                    target_url: "https://language-translator.vercel.app/api/translate"
+                    target_url: "https://language-translators.vercel.app/api/translate"
                 }
             }
 
