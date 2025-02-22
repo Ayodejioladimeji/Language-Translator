@@ -101,7 +101,7 @@ export default async function handler(
                                 "Thai"
                             ],
                             description: "Select the default language for translation.",
-                            default: "English",
+                            default: "Korean",
                             required: true
                         },
                         {
@@ -112,7 +112,7 @@ export default async function handler(
                             required: false
                         }
                     ],
-                    target_url: "https://language-translators.vercel.app/api/translate"
+                    target_url: "https://language-translators.vercel.app/api/translator"
                 }
             }
 
