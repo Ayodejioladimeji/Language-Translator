@@ -1,17 +1,39 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { sendWebhookNotification } from "@/lib/webhook";
 import translate from "google-translate-api-x";
-import { getAIResponse } from "../services/aiServices";
+import { getAIResponse } from "../services/aiService";
 import { isBotMentioned, extractMessageContent } from "../utils/helpers";
 import axios from "axios";
+import Cors from "cors";
 
-interface BotData {
-    name: string;
-    description: string;
-    image: string;
-    trigger_word: string;
-    commands: Record<string, string>;
+// Configure CORS
+const cors = Cors({
+    origin: [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://telex.im",
+        "https://staging.telex.im",
+        "https://telex-auth.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+});
+
+/* eslint-disable */
+
+// Middleware function to run CORS
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+    return new Promise((resolve, reject) => {
+        fn(req, res, (result: any) => {
+            if (result instanceof Error) {
+                return reject(result);
+            }
+            return resolve(result);
+        });
+    });
 }
+
 
 // Full country names to ISO codes
 const languageMap: Record<string, string> = {
@@ -43,8 +65,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ error: "Method Not Allowed" });
     }
 
+    await runMiddleware(req, res, cors);
+
     try {
-        const { message, org_id, thread_id, channel_id, settings } = req.body;
+        const { message, org_id, thread_id, channel_id, settings, is_dm } = req.body;
 
         if (!message || !settings) {
             return res.status(400).json({ error: "Missing required parameters" });
@@ -67,7 +91,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const translatedText: any = await translate(userMessage, { to: targetLanguage, forceTo: true });
 
         // If the bot is NOT mentioned, return only the translated message
-        if (!isBotMentioned(userMessage)) {
+        if (!isBotMentioned(userMessage) && !is_dm) {
             return res.status(200).json({
                 originalText: userMessage,
                 message: translatedText?.text,
@@ -76,7 +100,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Extract actual message if the bot was mentioned
-        userMessage = extractMessageContent(userMessage);
+        if(!is_dm){
+            userMessage = extractMessageContent(userMessage);
+        }
 
         // Fetch AI-generated response
         const botResponse = await getAIResponse(userMessage);
@@ -100,6 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await axios.post(`https://ping.staging.telex.im/v1/return/${channel_id}`, payload);
 
         return res.status(200).json({
+            message: translatedText?.text,
             originalText: userMessage,
             translatedMessage: translatedBotResponse?.text,
             language: targetLanguageFull,

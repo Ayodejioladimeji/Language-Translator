@@ -101,7 +101,7 @@ export default async function handler(
                                 "Thai"
                             ],
                             description: "Select the default language for translation.",
-                            default: "Korean",
+                            default: "English",
                             required: true
                         },
                         {
@@ -114,8 +114,8 @@ export default async function handler(
                     ],
                     target_url: "https://language-translators.vercel.app/api/translator",
                     bot:true,
-                    bot_data:{
-                        name: "LayoBright",
+                    bot_profile:{
+                        name: "Layobrights",
                         description:"Layobright is a bot that interacts with messages directed to it.",
                         image:"https://res.cloudinary.com/devsource/image/upload/v1741533595/chatbot_fofyng.avif",
                         trigger_word:"@layobright",
@@ -125,7 +125,6 @@ export default async function handler(
                             "/quote": "Give a motivational quote",
                             "/language": "Change bot language. Example: /language es"
                         }
-
                     }
                 }
             }
