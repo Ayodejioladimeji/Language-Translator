@@ -13,11 +13,11 @@ export async function getAIResponse(message: string): Promise<string> {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4o-mini",
-                // model: "gpt-3.5-turbo",
+                // model: "gpt-4o-mini",
+                model: "gpt-3.5-turbo",
                 messages: [{ role: "user", content: message }],
                 max_tokens: 100,
-                store:true
+                store:true 
             },
             {
                 headers: {

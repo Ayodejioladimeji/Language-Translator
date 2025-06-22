@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { sendWebhookNotification } from "@/lib/webhook";
 import translate from "google-translate-api-x";
-import { getAIResponse } from "../services/aiService";
+import { getAIResponse } from "../services/aiServices";
 import { isBotMentioned, extractMessageContent } from "../utils/helpers";
 import axios from "axios";
 import Cors from "cors";
@@ -15,7 +15,7 @@ const cors = Cors({
         "https://staging.telex.im",
         "https://telex-auth.vercel.app",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 });
@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await runMiddleware(req, res, cors);
 
     try {
-        const { message, org_id, thread_id, channel_id, settings, is_dm } = req.body;
+        const { message, thread_id, channel_id, settings, is_dm } = req.body;
 
         if (!message || !settings) {
             return res.status(400).json({ error: "Missing required parameters" });
@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Translate the original message before further processing
         const translatedText: any = await translate(userMessage, { to: targetLanguage, forceTo: true });
 
-        // If the bot is NOT mentioned, return only the translated message
+        // If the bot is NOT mentioned and isDM is false, return only the translated message
         if (!isBotMentioned(userMessage) && !is_dm) {
             return res.status(200).json({
                 originalText: userMessage,
@@ -119,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const payload = {
             message: botResponse,
             reply: false,
-            username: "layobrights",
+            username: "lexa",
             thread_id: thread_id,
         };
 

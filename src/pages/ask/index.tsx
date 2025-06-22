@@ -22,6 +22,7 @@ const Home = () => {
     const [selectedStacks, setSelectedStacks] = useState<any[]>([]);
     const [companyName, setCompanyName] = useState("");
     const [jobDescription, setJobDescription] = useState("");
+    const [pastJobDescriptions, setPastJobDescriptions] = useState(""); // New state for past job descriptions
 
     // set initial data from local storage
     useEffect(() => {
@@ -33,6 +34,7 @@ const Home = () => {
         setExperience(res.experience || "1");
         setCompanyName(res.companyName || "");
         setJobDescription(res.jobDescription || "");
+        setPastJobDescriptions(res.pastJobDescriptions || ""); // Load from local storage
 
         const storedStacks = res.stack || [];
         // Set raw stack values for backend usage
@@ -88,6 +90,7 @@ const Home = () => {
             stack,
             companyName,
             jobDescription,
+            pastJobDescriptions, // Save to local storage
         }
         localStorage.setItem("data", JSON.stringify(data))
     };
@@ -115,6 +118,7 @@ const Home = () => {
                     stack,
                     companyName,
                     jobDescription,
+                    pastJobDescriptions, // Send to backend
                 }),
             });
 
@@ -174,9 +178,45 @@ const Home = () => {
                     🎙 Interview Assistant
                 </h1>
 
-                <div className="flex flex-col lg:flex-row gap-8">
+
+                <div className="max-w-4xl mx-auto">
+
+                    <div className="mb-5">
+                        {/* Detected Question */}
+                        <div className="bg-gray-100 p-4 rounded mb-6">
+                            <h2 className="text-lg font-semibold mb-2">🎤 Question Detected:</h2>
+                            <p className="text-gray-700 mb-2">{question || "Waiting for speech..."}</p>
+                            {question && (
+                                <button className="bg-blue-500 p-2 rounded text-white text-xs" onClick={() => fetchAnswer(question)}>
+                                    Send
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="flex justify-center gap-4">
+                            <button onClick={isListening ? stopListening : startListening} className={`px-6 py-2 rounded font-semibold ${isListening ? "bg-red-500" : "bg-blue-500"} text-white`}>
+                                {isListening ? "Stop Listening" : "Start Listening"}
+                            </button>
+                            <button onClick={() => setQuestion("")} className="px-6 py-2 rounded bg-gray-500 text-white font-semibold">
+                                Clear
+                            </button>
+                        </div>
+
+                        {/* Generated Answer */}
+                        <div className="bg-gray-100 p-4 rounded mt-5">
+                            <h2 className="text-lg font-semibold mb-2">✍️ Generated Answer:</h2>
+                            <div className="prose max-w-none space-y-4">
+                                {answer ? (
+                                    <ReactMarkdown>{formatAnswer(answer)}</ReactMarkdown>
+                                ) : (
+                                    <p className="text-gray-500">Answer will appear here...</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* LEFT SIDE: Inputs and Buttons */}
-                    <div className="lg:w-1/2 w-full">
+                    <div className="mt-5">
                         {/* System Prompt Setup */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div>
@@ -214,45 +254,31 @@ const Home = () => {
                                 <label className="block text-sm font-medium mb-2">Stacks</label>
                                 <Select isMulti options={availableStacks} value={selectedStacks} onChange={handleStackChange} className="w-full border rounded p-2" placeholder="Select stacks..." />
                             </div>
-                            <div className="md:col-span-2">
+
+
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 mb-20">
+                            <div>
                                 <label className="block text-sm font-medium mb-1">Job Description / Key Requirements</label>
-                                <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} placeholder="Paste job description or key points" className="w-full border rounded p-2" rows={4} />
+                                <textarea
+                                    value={jobDescription}
+                                    onChange={(e) => setJobDescription(e.target.value)}
+                                    placeholder="Paste job description or key points"
+                                    className="w-full border rounded p-2"
+                                    rows={6}
+                                />
                             </div>
-                        </div>
 
-                        {/* Listening Buttons */}
-                        <div className="flex justify-center gap-4">
-                            <button onClick={isListening ? stopListening : startListening} className={`px-6 py-2 rounded font-semibold ${isListening ? "bg-red-500" : "bg-blue-500"} text-white`}>
-                                {isListening ? "Stop Listening" : "Start Listening"}
-                            </button>
-                            <button onClick={() => setQuestion("")} className="px-6 py-2 rounded bg-gray-500 text-white font-semibold">
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* RIGHT SIDE: Question & Answer */}
-                    <div className="lg:w-1/2 w-full">
-                        {/* Detected Question */}
-                        <div className="bg-gray-100 p-4 rounded mb-6">
-                            <h2 className="text-lg font-semibold mb-2">🎤 Question Detected:</h2>
-                            <p className="text-gray-700 mb-2">{question || "Waiting for speech..."}</p>
-                            {question && (
-                                <button className="bg-blue-500 p-2 rounded text-white text-xs" onClick={() => fetchAnswer(question)}>
-                                    Send
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Generated Answer */}
-                        <div className="bg-gray-100 p-4 rounded">
-                            <h2 className="text-lg font-semibold mb-2">✍️ Generated Answer:</h2>
-                            <div className="prose max-w-none space-y-4">
-                                {answer ? (
-                                    <ReactMarkdown>{formatAnswer(answer)}</ReactMarkdown>
-                                ) : (
-                                    <p className="text-gray-500">Answer will appear here...</p>
-                                )}
+                            {/* New textarea for Past Job Descriptions */}
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Past Job Descriptions / Project Details</label>
+                                <textarea
+                                    value={pastJobDescriptions}
+                                    onChange={(e) => setPastJobDescriptions(e.target.value)}
+                                    placeholder="Paste descriptions of your past projects or roles here, highlighting technologies used (e.g., 'Project X: Developed a mobile app using React Native and Redux for state management. Implemented real-time data synchronization...')"
+                                    className="w-full border rounded p-2"
+                                    rows={6}
+                                />
                             </div>
                         </div>
                     </div>

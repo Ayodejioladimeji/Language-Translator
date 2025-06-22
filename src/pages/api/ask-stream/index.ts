@@ -12,13 +12,41 @@ export default async function handler(req: Request) {
     }
 
     const body = await req.json();
-    const { question, fullName, role, level, experience, stack, companyName, jobDescription } = body;
+    const { question, fullName, role, level, experience, stack, companyName, jobDescription, pastJobDescriptions } = body;
 
     if (!question) {
         return new Response(JSON.stringify({ error: "No question provided" }), { status: 400 });
     }
 
     try {
+
+        // const systemPrompt = `
+        //     I am currently undergoing a technical interview.
+        //     I am a ${level} ${role} developer named ${fullName}, with ${experience} years of experience.
+        //     My main technologies include ${stack.join(", ")}.
+        //     I am applying for a ${role} position at ${companyName}.
+        //     Here is a brief overview of the job description and skills required: ${jobDescription}.
+
+        //     My past work experiences include the following, where I have applied my skills and technologies:
+        //     ${pastJobDescriptions || "No past job descriptions provided."}
+
+
+        //     Important:
+        //     - I have worked with all technologies as listed in my ${stack.join(", ")}.
+        //     - When answering questions, assume I have practical, real-world experience with these tools.
+        //     - Provide responses based on my previous project experiences, not generic definitions.
+        //     - Answer in a professional, detailed, human-friendly tone.
+        //     - If asked about a tool or concept you don’t have direct experience with (e.g., not listed in ${stack.join(", ")}), say so briefly and confidently. Then pivot to:
+        //     - How you’d approach learning it,
+        //     - Similar technologies you've used,
+        //     - Keep it short, honest, and insightful — like you’re talking to a hiring manager who values authenticity.
+        //     - Do NOT give advice or tutorials, only respond based on my personal experience.
+        //     - Distinguish between your headings and sub-headings.
+        //     - **Ensure technical terms are spelled correctly and used accurately.
+
+        //     Question:
+        //     `;
+
 
         const systemPrompt = `
             I am currently undergoing a technical interview.
@@ -27,17 +55,27 @@ export default async function handler(req: Request) {
             I am applying for a ${role} position at ${companyName}.
             Here is a brief overview of the job description and skills required: ${jobDescription}.
 
+            My past work experiences include the following, where I have applied my skills and technologies:
+            ${pastJobDescriptions || "No past job descriptions provided."}
 
             Important:
-            - I have worked with WebSockets, Firebase, and other technologies as listed on my resume.
+            - I have worked with all technologies as listed in my ${stack.join(", ")}.
             - When answering questions, assume I have practical, real-world experience with these tools.
             - Provide responses based on my previous project experiences, not generic definitions.
-            - Answer in a professional, detailed, human-friendly tone.
+            - Keep answers structured and concise, with **brief context followed by key contributions or outcomes**.
+            - Limit each answer to **2–3 concise paragraphs** or **up to 6 key bullet points**.
+            - Use a professional, confident, and human tone — no filler or storytelling.
+            - If asked about a tool or concept you don’t have direct experience with (e.g., not listed in ${stack.join(", ")}), say so briefly and confidently. Then pivot to:
+              • How you’d approach learning it.
+              • Similar technologies you've used.
             - Do NOT give advice or tutorials, only respond based on my personal experience.
-            + - **Ensure technical terms are spelled correctly and used accurately.
+            - Distinguish between your headings and sub-headings.
+            - Ensure technical terms are spelled correctly and used accurately.
 
             Question:
             `;
+
+
 
 
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });

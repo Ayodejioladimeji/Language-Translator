@@ -115,10 +115,10 @@ export default async function handler(
                     target_url: "https://language-translators.vercel.app/api/translator",
                     bot:true,
                     bot_profile:{
-                        name: "Layobrights",
-                        description:"Layobright is a bot that interacts with messages directed to it.",
+                        name: "Lexa",
+                        description:"I am a general-purpose AI agent created to answer any question you throw at me — across any domain, with clarity, precision, and professionalism.",
                         image:"https://res.cloudinary.com/devsource/image/upload/v1741533595/chatbot_fofyng.avif",
-                        trigger_word:"@layobright",
+                        trigger_word:"@lexa",
                         commands: {
                             "/help": "Available commands: /help, /joke, /quote, /language [code]",
                             "/joke": "Tell a joke",

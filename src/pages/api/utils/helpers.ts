@@ -1,8 +1,8 @@
 export function isBotMentioned(message: string): boolean {
-    return /@layobrights/i.test(message);
+    return /@lexa/i.test(message);
 }
 
 
 export function extractMessageContent(message: string): string {
-    return message.replace(/@layobrights/gi, "").trim(); 
+    return message.replace(/@lexa/gi, "").trim(); 
 }
